@@ -15,10 +15,10 @@
     <title>Intro</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="/static/css/starter-template.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/starter-template.css" rel="stylesheet">
 
 </head>
 
@@ -54,11 +54,9 @@
             mostly barebones HTML document.</p>
 
 
-        {% for post in resultData %}
-            <a href="/main">
-                <h1>{{ post.title }}</h1>
-                <p>{{ post.type }}</p>
-            </a>
+        {% for data in resultData %}
+                <h1>{{ data.title }}</h1>
+                <p>{{ data.type }}</p>
         {% endfor %}
 
 
@@ -77,8 +75,8 @@
 <!-- Bootstrap core JavaScript
 ================================================== -->
 <!-- Placed at the end of the document so the pages load faster -->
-<script src="/static/js/jquery.min.js"></script>
-<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/bootstrap/js/jquery.min.js"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
 <script>
     function send_data(){
 

@@ -5,21 +5,43 @@ import dbModule
 
 app = Flask(__name__)
 
-@app.route('/index', methods=['GET'])
+
+@app.route('/', methods=['GET'])
 def index():
     db_class = dbModule.Database()
 
-    sql = "select id, title, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, concat(a.addr1, ' ',a.addr2) addr \
+    #sql = "select id, title, concat(a.addr1, ' ',a.addr2) addr, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, \
+    sql =  "select id, title, SUBSTRING_INDEX(addr1, ' ', 1) addr, firstimage \
             from TB_DESTINATION a \
-            limit 0, 30"
+            where firstimage != '' \
+            ORDER BY RAND() \
+            limit 0, 32"
     row = db_class.executeAll(sql)
 
     #print(row)
 
-    return render_template('test/index.html',
+    return render_template('index.html',
                            result=None,
                            resultData=row,
                            resultUPDATE=None)
+
+
+# @app.route('/index', methods=['GET'])
+# def index():
+#     db_class = dbModule.Database()
+#
+#     #sql = "select id, title, concat(a.addr1, ' ',a.addr2) addr, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, \
+#     sql =  "select id, title, concat(a.addr1, ' ',a.addr2) addr \
+#             from TB_DESTINATION a \
+#             limit 0, 30"
+#     row = db_class.executeAll(sql)
+#
+#     #print(row)
+#
+#     return render_template('test/index2.html',
+#                            result=None,
+#                            resultData=row,
+#                            resultUPDATE=None)
 
 
 @app.route('/main', methods=['POST'])
@@ -37,7 +59,7 @@ def main():
 
     # print(row)
 
-    return render_template('test/index.html',
+    return render_template('test/index2.html',
                            result=None,
                            resultData=row,
                            resultUPDATE=None)
