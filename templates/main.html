@@ -78,7 +78,7 @@
                     <div class="card-footer">
                         {#                        <a href="#" class="btn btn-primary">Score</a>#}
                         {#                        <div class="rating" data-rate-value=5></div>#}
-                        <div class="my-rating-4" data-rating="0.0" data-des_id="{{ data.id }}" data-title="{{ data.title }}"></div>
+                        <div class="my-rating-4" data-rating="0.0" data-des_id="{{ data.id }}"></div>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
 
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark" id="nav_go_main">
     <div class="mx-auto order-0">
-        <a class="navbar-brand mx-auto" href="#" onclick="goMain()">메인으로 이동하기</a>
+        <a class="navbar-brand mx-auto" href="#" id="goMain()">메인으로 이동하기</a>
     </div>
 </nav>
 
@@ -108,7 +108,6 @@
 <form action="/main" method="post" id="form_goMain">
     <input type="hidden" name="des_id" id="form_des_id" value="">
     <input type="hidden" name="score" id="form_score" value="">
-    <input type="hidden" name="title" id="form_title" value="">
 </form>
 
 <!-- Bootstrap core JavaScript -->
@@ -125,7 +124,6 @@
     var checkCnt = 0;
     var des_id = '';
     var score = '';
-    var title = '';
     $(document).ready(function () {
         $("#nav_go_main").hide();
 
@@ -144,18 +142,15 @@
                     $("#nav_go_main").show();
                 }
                 des_id += $el.data('des_id') + "|";
-                title += $el.data('title') + "|";
                 score += currentRating + "|";
-
             }
-        });
 
+        });
     });
 
     function goMain(){
         $('#form_des_id').val(des_id);
         $('#form_score').val(score);
-        $('#form_title').val(title);
         $('#form_goMain').submit();
     }
 </script>

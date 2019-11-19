@@ -1,20 +1,20 @@
 # -- coding: utf-8 --
-from flask import Flask
-from flask import render_template, request
+from flask import Flask, request
+from flask import render_template
 import dbModule
+import requests
 
 app = Flask(__name__)
-
+db_class = dbModule.Database()
 
 @app.route('/', methods=['GET'])
 def index():
-    db_class = dbModule.Database()
 
+    #ORDER BY RAND() \
     #sql = "select id, title, concat(a.addr1, ' ',a.addr2) addr, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, \
-    sql =  "select id, title, SUBSTRING_INDEX(addr1, ' ', 1) addr, firstimage \
+    sql =  "select id, title, SUBSTRING_INDEX(addr1, ' ', 1) addr, firstimage, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type \
             from TB_DESTINATION a \
             where firstimage != '' \
-            ORDER BY RAND() \
             limit 0, 32"
     row = db_class.executeAll(sql)
 
@@ -44,25 +44,22 @@ def index():
 #                            resultUPDATE=None)
 
 
-@app.route('/main', methods=['POST'])
+@app.route('/main', methods=['GET', 'POST'])
 def main():
-    id = request.form['id']
-    title = request.form['title']
-    score = request.form['score']
+    # des_id = request.form['des_id']
+    # score = request.form['score']
+    #print(id, score)
 
-    db_class = dbModule.Database()
+    response = requests.get("http://125.131.73.94:60042/mostSimilar?title=강화도")
+    print(response.json())
 
-    sql = "select id, title, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, concat(a.addr1, ' ',a.addr2) addr \
-            from TB_DESTINATION a \
-            limit 0, 30"
-    row = db_class.executeAll(sql)
+    #sql = "select id, title, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, concat(a.addr1, ' ',a.addr2) addr \
+            # from TB_DESTINATION a \
+            # limit 0, 30"
+    #row = db_class.executeAll(sql)
 
     # print(row)
-
-    return render_template('test/index2.html',
-                           result=None,
-                           resultData=row,
-                           resultUPDATE=None)
+    return response.json()
 
 
 #
