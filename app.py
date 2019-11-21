@@ -2,7 +2,8 @@
 from flask import Flask, request
 from flask import render_template
 import dbModule
-import requests
+import requests, json
+import ast
 
 app = Flask(__name__)
 db_class = dbModule.Database()
@@ -46,20 +47,50 @@ def index():
 
 @app.route('/main', methods=['GET', 'POST'])
 def main():
-    # des_id = request.form['des_id']
-    # score = request.form['score']
-    #print(id, score)
+    des_id = request.form['des_id']
+    score = request.form['score']
+    title = request.form['title']
+    print(id, score, title)
 
-    response = requests.get("http://125.131.73.94:60042/mostSimilar?title=강화도")
-    print(response.json())
+    url = 'http://125.131.73.94:60042/get_cb_places?titles=' + title + '&scores=' + score
+    print(url)
+    headers = {'Content-type': 'application/json'}
+    response = requests.get(url, headers=headers)
+    #print(response.json())
 
-    #sql = "select id, title, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type, concat(a.addr1, ' ',a.addr2) addr \
-            # from TB_DESTINATION a \
-            # limit 0, 30"
-    #row = db_class.executeAll(sql)
+    #한글
+    data = json.dumps(response.json(), ensure_ascii=False)
+    print(data)
 
-    # print(row)
-    return response.json()
+
+    cb_title = ''
+    cb_count = 0
+    for d in json.loads(data):
+        cb_title += '\'' + d[0] + '\','
+        cb_count += 1
+        if(cb_count == 20):
+            break
+
+    print(cb_title)
+    #string = u'\ud0a8\ub354\ub79c\ub4dc'
+    #format_strings = ','.join(['%s'] * len(list_of_ids))
+
+
+
+    sql = "select id, title, (select cat3_nm from TB_TYPE_CODE where cat3 = a.cat3) type,  \
+           if(firstimage != '',firstimage, 'http://placehold.it/500x325') firstimage, SUBSTRING_INDEX(addr1, ' ', 1) addr \
+            from TB_DESTINATION a \
+            where title in (" + cb_title[:-1] + ") \
+            limit 0, 20"
+    print(sql)
+
+    row = db_class.executeAll(sql)
+
+
+    return render_template('main.html',
+                           resultData=row,
+                           resultScore=data,
+                           resultUPDATE=None)
 
 
 #

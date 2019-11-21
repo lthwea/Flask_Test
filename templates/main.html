@@ -32,14 +32,15 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Scoring
-                        <span class="sr-only">(current)</span>
+                <li class="nav-item ">
+                    <a class="nav-link" href="#">Input(Scoring)
                     </a>
                 </li>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Recommendation</a>
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Output(Recommendation)
+                    <span class="sr-only">(current)</span>
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Detail</a>
@@ -57,16 +58,16 @@
 <div class="container">
 
     <!-- Jumbotron Header -->
-    <header class="jumbotron my-4">
-        <h3 class="display-4">데모</h3>
-        <p class="lead">방문하신 관광지의 평점을 메겨주세요. 5곳 이상 평점을 메기면 메인 페이지로 이동할 수 있습니다.</p>
-        <a href="#" class="btn btn-primary btn-lg">메인으로 바로가기</a>
+    <header class="jumbotron my-4" style="padding-bottom: 50px;padding-top: 50px;">
+{#        <h3 class="display-4">데모</h3>#}
+        <p class="lead" style="margin-bottom: 0px;">Recommendation List</p>
+{#        <a href="#" class="btn btn-primary btn-lg">메인으로 바로가기</a>#}
     </header>
 
     <!-- Page Features -->
+
+    <h3>Content-Based</h3>
     <div class="row text-center">
-
-
         {% for data in resultData %}
             <div class="col-lg-3 col-md-6 mb-4">
                 <div class="card h-100">
@@ -78,21 +79,67 @@
                     <div class="card-footer">
                         {#                        <a href="#" class="btn btn-primary">Score</a>#}
                         {#                        <div class="rating" data-rate-value=5></div>#}
-                        <div class="my-rating-4" data-rating="0.0" data-des_id="{{ data.id }}"></div>
+                        <div class="my-rating-4" data-rating="0.0" data-des_id="{{ data.id }}" data-title="{{ data.title }}"></div>
                     </div>
                 </div>
             </div>
         {% endfor %}
-
     </div>
+
+    <h3>Collborative Filtering</h3>
+    <div class="row text-center">
+        {% for data in resultData %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100">
+                    <img class="card-img-top" src="{{ data.firstimage }}" alt="">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ data.title }}</h4>
+                        <p class="card-text">{{ data.addr }} | {{ data.type }}</p>
+                    </div>
+                    <div class="card-footer">
+                        {#                        <a href="#" class="btn btn-primary">Score</a>#}
+                        {#                        <div class="rating" data-rate-value=5></div>#}
+                        <div class="my-rating-4" data-rating="0.0" data-des_id="{{ data.id }}" data-title="{{ data.title }}"></div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+    <h3>Hybrid Filtering</h3>
+    <div class="row text-center">
+        {% for data in resultData %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card h-100">
+                    <img class="card-img-top" src="{{ data.firstimage }}" alt="">
+                    <div class="card-body">
+                        <h4 class="card-title">{{ data.title }}</h4>
+                        <p class="card-text">{{ data.addr }} | {{ data.type }}</p>
+                    </div>
+                    <div class="card-footer">
+                        {#                        <a href="#" class="btn btn-primary">Score</a>#}
+                        {#                        <div class="rating" data-rate-value=5></div>#}
+                        <div class="my-rating-4" data-rating="0.0" data-des_id="{{ data.id }}" data-title="{{ data.title }}"></div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
     <!-- /.row -->
+
+{% for d in resultScore %}
+    {{ d }}
+{% endfor %}
+
 
 </div>
 <!-- /.container -->
 
-<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark" id="nav_go_main">
+<nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-success" id="nav_go_main">
     <div class="mx-auto order-0">
-        <a class="navbar-brand mx-auto" href="#" id="goMain()">메인으로 이동하기</a>
+        <a class="navbar-brand mx-auto" href="#" onclick="goMain()">메인으로 이동하기</a>
     </div>
 </nav>
 
@@ -108,6 +155,7 @@
 <form action="/main" method="post" id="form_goMain">
     <input type="hidden" name="des_id" id="form_des_id" value="">
     <input type="hidden" name="score" id="form_score" value="">
+    <input type="hidden" name="title" id="form_title" value="">
 </form>
 
 <!-- Bootstrap core JavaScript -->
@@ -124,6 +172,7 @@
     var checkCnt = 0;
     var des_id = '';
     var score = '';
+    var title = '';
     $(document).ready(function () {
         $("#nav_go_main").hide();
 
@@ -133,26 +182,21 @@
             starSize: 30,
             emptyColor: 'lightgray',
             hoverColor: 'salmon',
-            activeColor: 'crimson',
+            activeColor: 'salmon',
             useGradient: false,
             disableAfterRate: false,
             callback: function (currentRating, $el) {
                 checkCnt += 1;
-                if(checkCnt >= 5){
-                    $("#nav_go_main").show();
-                }
-                des_id += $el.data('des_id') + "|";
-                score += currentRating + "|";
-            }
 
+                des_id += $el.data('des_id') + "|";
+                title += $el.data('title') + "|";
+                score += currentRating + "|";
+
+            }
         });
+
     });
 
-    function goMain(){
-        $('#form_des_id').val(des_id);
-        $('#form_score').val(score);
-        $('#form_goMain').submit();
-    }
 </script>
 </body>
 </html>
